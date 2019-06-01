@@ -1,0 +1,24 @@
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMM,,,,,mmmmMMMMMmmmmmmmm;;;mMM
+MM,,,,,,,,,,,mmMMm,,,,,,,,,,,,mm
+M,,,,,,,,,,,,,mQ 1 15 22 m,,,,,,,,,,,,,,m
+MM,,,,,,,,,,,,,.,,,,,,,,,,,,,mmM
+M,,,,,,,,,,,,,;.,,,,,,,,.....Q 2 1 5 MM
+Mm,,,,,,,,,,;;;.,,,,,,,,.;;,,mMM
+MMm,,,,,,,;;;;;.,,,,,,,,.;,,,,mm
+MMM%.....................,,,,,,m
+MMmm,,,,,,,,,,,;;.;;;;,,,,,,,,,m
+Mm,,,,,,,,,,,,,;;.;;;,,,,,,,,,,m
+m,,,,,,#,,,,,,,,;.;,,,,,,,,,,,,m
+m,,,,,,O,#,,,,,,,.,,,~~~,,,,,,,m
+m,,,,,#,,,,,,,,,,.,,,~~~,,,,,,,m
+m,,,,,,,,,,,,,,,,.,,,,,,,,,,,,,m
+Mm,,,,,,,,,,,,,,,.,,,,,,,,,,,,,m
+Mmm,,,,,,XXXXXXXX_XXXXXXXX,,,,,m
+Mm,,,,,,,XBBXXXXX_XXXXXBBX,,,,,m
+m,,,,,,,,XBBBBBBBQ 3 15 1 BBBBBBBX,,,,;m
+m;;,,,,,,XXBBBBBBBBBBBBXXX,,,;;m
+m;;;,,,,,XXBBBBBBBBBBBBXXX,,,;;m
+m;;;;,,,,XBBBBBBBBBBBBBBBX,,,;;m
+MMm;;;,,,XBBBBBBBBBBBBBBBX,,;;mM
+MMMMmmmMMMMMMMMMMMMMMMMMMMMmmMMM
