@@ -11,6 +11,7 @@
 
 #include <typeinfo> //to include type information
 
+//#include "Classes.h"
 #include "States.h"
 
 State::State() {}
@@ -18,7 +19,6 @@ State::State() {}
 State::compl State() {}
 
 void State::Render() {
-	SDL_RenderClear(Game::Instance()->GetRenderer());
 	SDL_RenderPresent(Game::Instance()->GetRenderer());
 }
 
@@ -30,7 +30,15 @@ TitleState::compl TitleState() {}
 void TitleState::Update() {}
 
 void TitleState::Render() {
+
+	m_rSrc = { 0, 0, 1024, 728 };
+	m_rDest = { 0, 0, 1024, 728 };
+	
 	//further implementation goes here
+	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetImage(), &m_rSrc, &m_rDest);
+	m_rSrc = { 0, 0, 0x7F, 0x7F };
+	m_rDest = { 0x1C1, 0x1A5, 0x7F, 0x7F };
+	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetButton(), &m_rSrc, &m_rDest);
 	State::Render();
 }
 
@@ -113,13 +121,15 @@ void LoseState::Exit() {}
 void LoseState::Resume() {}
 
 //STATE MACHINE
-StateMachine::StateMachine() {}
+SMachine::SMachine() {
+	m_vStates.reserve(1);
+}
 
-StateMachine::compl StateMachine() {}
+SMachine::compl SMachine() {}
 
-void StateMachine::Update() { if(!m_vStates.empty()) m_vStates.back()->Update(); }
+void SMachine::Update() { if(!m_vStates.empty()) m_vStates.back()->Update(); }
 
-void StateMachine::Render() { // Requires refinement for display of the game state
+void SMachine::Render() { // Requires refinement for display of the game state
 	if (!m_vStates.empty()) { //checks for emptiness
 		if (typeid(m_vStates.back()) == typeid(PauseState)) { //if the last state is pause
 			// Assuming Pause was overlapped on Game
@@ -131,12 +141,12 @@ void StateMachine::Render() { // Requires refinement for display of the game sta
 	}
 }
 
-void StateMachine::PushState(State* pState) {
+void SMachine::PushState(State* pState) {
 	pState->Enter();
 	m_vStates.push_back(pState);
 }
 
-void StateMachine::ChangeState(State* pState) { //verify again later for accuracy
+void SMachine::ChangeState(State* pState) { //verify again later for accuracy
 	if (!m_vStates.empty()) { //emptyness check
 		//Game state cannot be popped on pause
 		if (typeid(m_vStates.back()) == typeid(GameState)
@@ -154,7 +164,7 @@ void StateMachine::ChangeState(State* pState) { //verify again later for accurac
 	
 }
 
-void StateMachine::PopState() {//check implementation
+void SMachine::PopState() {//check implementation
 	if (!m_vStates.empty()) { //emptiness check
 		DestroyLastState();
 	}
@@ -163,15 +173,15 @@ void StateMachine::PopState() {//check implementation
 	}
 }
 
-void StateMachine::Clean() {
+void SMachine::Clean() {
 	while (!m_vStates.empty()) {
 		DestroyLastState();
 	}
 }
 
-std::vector<State*>& StateMachine::GetStates() { return m_vStates; }
+std::vector<State*>& SMachine::GetStates() { return m_vStates; }
 
-void StateMachine::DestroyLastState() {
+void SMachine::DestroyLastState() {
 	if (!m_vStates.empty()) {
 		m_vStates.back()->Exit();
 		delete m_vStates.back();

@@ -65,10 +65,15 @@ public:
 	void SetDst(SDL_Rect d) { m_rDst = d; }
 };
 
+class Button : public Sprite {
+	private:
+
+};
+
 class Player : public Sprite
 {
 private:
-	int m_iX, m_iY;
+	int m_iX, m_iY, m_iSprite;
 
 public:
 	Player(SDL_Rect s, SDL_Rect d) :Sprite(s, d) {}
@@ -83,6 +88,9 @@ public:
 	{ 
 		m_iY = y; 
 		m_rDst.y = y * 32;
+	}
+	void Animate() {
+
 	}
 };
 

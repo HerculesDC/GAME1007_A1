@@ -55,15 +55,23 @@ bool Engine::Init(const char * title, int xPos, int yPos, int width, int height,
 			{
 				if (IMG_Init(IMG_INIT_PNG))
 				{
+					SDL_Surface* pScreensSurf = IMG_Load("Title.png");
+					SDL_Surface* pPlayButtonSurf = IMG_Load("playButton.png");
 					SDL_Surface* pPlayerSurf = IMG_Load("Player.png");
-					SDL_Surface* pTileSurf = IMG_Load("Tiles.png"); 
+					SDL_Surface* pTileSurf = IMG_Load("Tiles.png");
+
+					m_oScreensText = SDL_CreateTextureFromSurface(m_pRenderer, pScreensSurf);
+					m_pPlayButtonText = SDL_CreateTextureFromSurface(m_pRenderer, pPlayButtonSurf);
 					m_pPlayerText = SDL_CreateTextureFromSurface(m_pRenderer, pPlayerSurf);
 					m_pTileText = SDL_CreateTextureFromSurface(m_pRenderer, pTileSurf);
+					
+					SDL_FreeSurface(pScreensSurf);
+					SDL_FreeSurface(pPlayButtonSurf);
 					SDL_FreeSurface(pPlayerSurf);
 					SDL_FreeSurface(pTileSurf);
 					cout << "Image creation success!" << endl;
 				}
-				else return false; // Init init fail.
+				else return false; // Img(Png) init fail. The JPG library is not available in this build
 			}
 			else return false; // Renderer init fail.
 		}
@@ -71,6 +79,8 @@ bool Engine::Init(const char * title, int xPos, int yPos, int width, int height,
 	}
 	else return false; // SDL init fail.
 	// Continue here after successful init.
+	m_sMachin = new SMachine();
+	m_sMachin->PushState(new TitleState());
 	m_pPlayer = new Player({0, 0, 32, 32}, {COLS/2*32, ROWS/2*32, 32, 32});
 	m_pPlayer->SetX(COLS/2);
 	m_pPlayer->SetY(ROWS/2);
@@ -111,6 +121,8 @@ bool Engine::KeyDown(SDL_Scancode c)
 
 void Engine::Update()
 {
+	m_sMachin->Update();
+
 	// Move the player.
 	if (KeyDown(SDL_SCANCODE_W) && m_pLevels[m_iCurrLevel].m_Map[m_pPlayer->GetY() - 1][m_pPlayer->GetX()].isObstacle() == false)
 	{
@@ -164,8 +176,12 @@ void Engine::Sleep()
 
 void Engine::Render()
 {
-	SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(m_pRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(m_pRenderer); // Clear the screen with the draw color.
+
+	m_sMachin->Render();
+	/*
+	
 	// Render the map.
 	for (int row = 0; row < ROWS; row++)
 	{
@@ -179,7 +195,8 @@ void Engine::Render()
 		SDL_RenderCopy(m_pRenderer, m_pTileText, m_pLevels[m_iCurrLevel].m_Doors[i].GetSrcP(), m_pLevels[m_iCurrLevel].m_Doors[i].GetDstP());
 	// Render the player.
 	SDL_RenderCopy(m_pRenderer, m_pPlayerText, m_pPlayer->GetSrcP(), m_pPlayer->GetDstP());	
-	SDL_RenderPresent(m_pRenderer); // Draw anew.
+	*/
+	//SDL_RenderPresent(m_pRenderer); // Draw anew.
 }
 
 void Engine::Clean()

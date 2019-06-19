@@ -3,6 +3,8 @@
 #include <vector>
 
 #include "Engine.h"
+#include "Classes.h"
+#include "GameObject.h"
 
 class State {//abstract class
 	public:
@@ -17,6 +19,7 @@ class State {//abstract class
 	private:
 };
 
+//technically, each state needs to be a singleton.
 class TitleState : public State {
 	public:
 		TitleState();
@@ -28,6 +31,7 @@ class TitleState : public State {
 		void Resume() override;
 
 	private:
+		SDL_Rect m_rSrc, m_rDest;
 };
 
 class GameState : public State {
@@ -82,10 +86,10 @@ class LoseState : public State {
 	private:
 };
 
-class StateMachine {
+class SMachine {
 	public:
-		StateMachine();
-		compl StateMachine();
+		SMachine();
+		compl SMachine();
 		void Update();
 		void Render();
 		void PushState(State* pState);
