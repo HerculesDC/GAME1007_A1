@@ -65,9 +65,14 @@ public:
 	void SetDst(SDL_Rect d) { m_rDst = d; }
 };
 
-class Button : public Sprite {
+class PlayButton : public Sprite {
 	private:
-
+		//int m_X, m_Y, m_W, m_H;
+		
+	public:
+		PlayButton(SDL_Rect s, SDL_Rect d) :Sprite(s, d) {}
+		void SetX(int newX) { m_rDst.x = newX; }
+		void SetY(int newY) { m_rDst.y = newY; }
 };
 
 class Player : public Sprite

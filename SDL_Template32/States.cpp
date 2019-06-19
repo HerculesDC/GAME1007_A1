@@ -23,7 +23,21 @@ void State::Render() {
 }
 
 // TITLE STATE
-TitleState::TitleState() {}
+TitleState::TitleState() {
+	
+	SDL_Rect tempSrc, tempDest;
+		tempSrc.x = 0x00;
+		tempSrc.y = 0x00;
+		tempSrc.w = 0x80;
+		tempSrc.h = 0x80;
+		
+		tempDest.x = 0x1C1;
+		tempDest.y = 0x1A5;
+		tempDest.w = 0x70;
+		tempDest.h = 0x80;
+		 
+	pButton = new PlayButton(tempSrc, tempDest);
+}
 
 TitleState::compl TitleState() {}
 
@@ -36,9 +50,8 @@ void TitleState::Render() {
 	
 	//further implementation goes here
 	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetImage(), &m_rSrc, &m_rDest);
-	m_rSrc = { 0, 0, 0x7F, 0x7F };
-	m_rDest = { 0x1C1, 0x1A5, 0x7F, 0x7F };
-	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetButton(), &m_rSrc, &m_rDest);
+	
+	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetButton(), pButton->GetSrcP(), pButton->GetDstP());
 	State::Render();
 }
 

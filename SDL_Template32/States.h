@@ -32,6 +32,7 @@ class TitleState : public State {
 
 	private:
 		SDL_Rect m_rSrc, m_rDest;
+		PlayButton*  pButton;
 };
 
 class GameState : public State {
