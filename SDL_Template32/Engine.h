@@ -20,6 +20,7 @@ public:
 private:
 	bool m_bStarted, m_bRunning;
 	const Uint8* m_iKeystates;
+	const SDL_MouseButtonEvent* m_mouse;
 	Uint32 m_start, m_end, m_delta, m_fps;
 	SDL_Window* m_pWindow;
 	SDL_Renderer* m_pRenderer;
@@ -40,7 +41,14 @@ public:
 	static Engine* Instance();
 	SDL_Texture* GetImage() const { return m_oScreensText; }
 	SDL_Texture* GetButton() const { return m_pPlayButtonText; }
+	SDL_Texture* GetPlayerText() const { return m_pPlayerText; }
+	SDL_Texture* GetTile() const { return m_pTileText; }
+	Level* GetLevel() const { return m_pLevels; }
+	void SetLevel(int index);
+	int GetLevelIndex() const { return m_iCurrLevel; }
+	Player* GetPlayer() { return m_pPlayer; }
 	bool KeyDown(SDL_Scancode c);
+	void GetMouse(SDL_Rect r);
 	SDL_Renderer* GetRenderer() { return m_pRenderer; }
 
 private:

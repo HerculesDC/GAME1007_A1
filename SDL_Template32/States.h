@@ -1,10 +1,11 @@
 #pragma once
 
 #include <vector>
-
 #include "Engine.h"
 #include "Classes.h"
 #include "GameObject.h"
+
+class PlayButton;
 
 class State {//abstract class
 	public:
@@ -36,16 +37,16 @@ class TitleState : public State {
 };
 
 class GameState : public State {
-public:
-	GameState();
-	compl GameState();
-	void Update() override;
-	void Render() override;
-	void Enter() override;
-	void Exit() override;
-	void Resume() override;
+	public:
+		GameState();
+		compl GameState();
+		void Update() override;
+		void Render() override;
+		void Enter() override;
+		void Exit() override;
+		void Resume() override;
 
-private:
+	private:
 };
 
 class PauseState : public State {
@@ -59,6 +60,8 @@ class PauseState : public State {
 		void Resume() override;
 
 	private:
+		SDL_Rect m_rSrc, m_rDest;
+		PlayButton* pButton;
 };
 
 class WinState : public State {
@@ -72,6 +75,8 @@ class WinState : public State {
 		void Resume() override;
 
 	private:
+		SDL_Rect m_rSrc, m_rDest;
+		PlayButton* pButton;
 };
 
 class LoseState : public State {
@@ -85,6 +90,8 @@ class LoseState : public State {
 		void Resume() override;
 
 	private:
+		SDL_Rect m_rSrc, m_rDest;
+		PlayButton* pButton;
 };
 
 class SMachine {

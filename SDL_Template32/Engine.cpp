@@ -1,3 +1,4 @@
+#include <typeinfo>
 #include "Engine.h"
 #define FPS 10 // A '.0' will make it a double.
 
@@ -88,6 +89,7 @@ bool Engine::Init(const char * title, int xPos, int yPos, int width, int height,
 		                       Level(2, "Level4.txt"), Level(1, "Level5.txt") };
 	m_iCurrLevel = 0;
 	m_iKeystates = SDL_GetKeyboardState(nullptr);
+	m_mouse = nullptr;
 	m_bRunning = true; // Everything is okay, start the engine.
 	return true;
 }
@@ -102,7 +104,12 @@ void Engine::HandleEvents()
 		case SDL_QUIT:
 			m_bRunning = false;
 			break;
-		// Any others below.
+		case SDL_MOUSEBUTTONDOWN:
+			m_mouse = new SDL_MouseButtonEvent(event.button);
+			break;
+		case SDL_MOUSEBUTTONUP:
+			m_mouse = nullptr;
+			break;
 		}
 	}
 }
@@ -118,10 +125,26 @@ bool Engine::KeyDown(SDL_Scancode c)
 	}
 	return false;
 }
+void Engine::GetMouse(SDL_Rect r) {
+	if (m_mouse) {
+		
+		if (m_mouse->x >= r.x && m_mouse->x <= (r.x + r.w) &&
+			m_mouse->y >= r.y && m_mouse->y <= (r.y + r.h)) {
+			cout << "can change state" << endl;
+		}
+		//*/
+	}
+}
+
+void Engine::SetLevel(int index) {
+	m_iCurrLevel = index;
+}
 
 void Engine::Update()
 {
 	m_sMachin->Update();
+
+	/*
 
 	// Move the player.
 	if (KeyDown(SDL_SCANCODE_W) && m_pLevels[m_iCurrLevel].m_Map[m_pPlayer->GetY() - 1][m_pPlayer->GetX()].isObstacle() == false)
@@ -159,6 +182,7 @@ void Engine::Update()
 			break;
 		}
 	}
+	//*/
 }
 
 void Engine::Wake()
@@ -180,23 +204,6 @@ void Engine::Render()
 	SDL_RenderClear(m_pRenderer); // Clear the screen with the draw color.
 
 	m_sMachin->Render();
-	/*
-	
-	// Render the map.
-	for (int row = 0; row < ROWS; row++)
-	{
-		for (int col = 0; col < COLS; col++)
-		{
-			SDL_RenderCopy(m_pRenderer, m_pTileText, m_pLevels[m_iCurrLevel].m_Map[row][col].GetSrcP(), m_pLevels[m_iCurrLevel].m_Map[row][col].GetDstP());
-		}
-	}
-	// Render the doors. Note, if we didn't, we'd just see a black square.
-	for (int i = 0; i < m_pLevels[m_iCurrLevel].m_iMaxDoors; i++)
-		SDL_RenderCopy(m_pRenderer, m_pTileText, m_pLevels[m_iCurrLevel].m_Doors[i].GetSrcP(), m_pLevels[m_iCurrLevel].m_Doors[i].GetDstP());
-	// Render the player.
-	SDL_RenderCopy(m_pRenderer, m_pPlayerText, m_pPlayer->GetSrcP(), m_pPlayer->GetDstP());	
-	*/
-	//SDL_RenderPresent(m_pRenderer); // Draw anew.
 }
 
 void Engine::Clean()

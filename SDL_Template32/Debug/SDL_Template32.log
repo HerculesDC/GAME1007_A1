@@ -1,16 +1,2 @@
 ﻿  Engine.cpp
-C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\Classes.h(77): error C2653: 'Game': is not a class or namespace name
-C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\Classes.h(77): error C3861: 'Instance': identifier not found
-C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\Classes.h(77): error C2660: 'SDL_RenderCopy': function does not take 3 arguments
-  C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL\SDL2-2.0.9\include\SDL_render.h(810): note: see declaration of 'SDL_RenderCopy'
-  Main.cpp
-C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\Classes.h(77): error C2653: 'Game': is not a class or namespace name
-C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\Classes.h(77): error C3861: 'Instance': identifier not found
-C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\Classes.h(77): error C2660: 'SDL_RenderCopy': function does not take 3 arguments
-  C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL\SDL2-2.0.9\include\SDL_render.h(810): note: see declaration of 'SDL_RenderCopy'
-  States.cpp
-C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\Classes.h(77): error C2653: 'Game': is not a class or namespace name
-C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\Classes.h(77): error C3861: 'Instance': identifier not found
-C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\Classes.h(77): error C2660: 'SDL_RenderCopy': function does not take 3 arguments
-  C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL\SDL2-2.0.9\include\SDL_render.h(810): note: see declaration of 'SDL_RenderCopy'
-  Generating Code...
+  SDL_Template32.vcxproj -> C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\Debug\SDL_Template32.exe

@@ -1,11 +1,15 @@
 #pragma once
 #include <fstream>
 #include "SDL.h"
+#include "States.h"
 #define ROWS 24
 #define COLS 32
 #define OTILES 8
 #define HTILES 1
 using namespace std;
+
+class State;
+class SMachine;
 
 /* ',', ';', 'M', 'm', '.', '-', '~', 'X',
    '#', 'O', '=', 'H', 'B', '_', 'Q', '%' */
@@ -71,8 +75,9 @@ class PlayButton : public Sprite {
 		
 	public:
 		PlayButton(SDL_Rect s, SDL_Rect d) :Sprite(s, d) {}
-		void SetX(int newX) { m_rDst.x = newX; }
-		void SetY(int newY) { m_rDst.y = newY; }
+		void Click(void (*inFunction)(State*), State* targetDest) {
+			(*inFunction)(targetDest);
+		}
 };
 
 class Player : public Sprite

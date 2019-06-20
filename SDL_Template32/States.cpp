@@ -11,7 +11,6 @@
 
 #include <typeinfo> //to include type information
 
-//#include "Classes.h"
 #include "States.h"
 
 State::State() {}
@@ -39,9 +38,22 @@ TitleState::TitleState() {
 	pButton = new PlayButton(tempSrc, tempDest);
 }
 
-TitleState::compl TitleState() {}
+TitleState::compl TitleState() {
+	delete pButton;
+	pButton = nullptr;
+}
 
-void TitleState::Update() {}
+void TitleState::Update() {
+	Game::Instance()->GetMouse(pButton->GetDst());
+	/*
+	if (Game::Instance()->GetMouse(pButton->GetDst())) {
+		if (1) {
+			cout << "Mouse inside button!" << endl;
+		}
+	}
+	else cout << "No mouse?" << endl;
+	//*/
+}
 
 void TitleState::Render() {
 
@@ -67,9 +79,66 @@ GameState::GameState() {}
 
 GameState::compl GameState() {}
 
-void GameState::Update() {}
+void GameState::Update() {
+	// Move the player.
+	if (Game::Instance()->KeyDown(SDL_SCANCODE_W) && 
+		Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY() - 1][Game::Instance()->GetPlayer()->GetX()].isObstacle() == false)
+	{
+		Game::Instance()->GetPlayer()->SetY(Game::Instance()->GetPlayer()->GetY() - 1);
+	}
+	else if (Game::Instance()->KeyDown(SDL_SCANCODE_S) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY() + 1][Game::Instance()->GetPlayer()->GetX()].isObstacle() == false)
+	{
+		Game::Instance()->GetPlayer()->SetY(Game::Instance()->GetPlayer()->GetY() + 1);
+	}
+	if (Game::Instance()->KeyDown(SDL_SCANCODE_A) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX() - 1].isObstacle() == false)
+	{
+		Game::Instance()->GetPlayer()->SetX(Game::Instance()->GetPlayer()->GetX() - 1);
+	}
+	else if (Game::Instance()->KeyDown(SDL_SCANCODE_D) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX() + 1].isObstacle() == false)
+	{
+		Game::Instance()->GetPlayer()->SetX(Game::Instance()->GetPlayer()->GetX() + 1);
+	}
+	// Hazard check.
+	if (Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX()].isHazard())
+	{
+		Game::Instance()->GetPlayer()->GetSrcP()->x = 160; // Set tombstone sprite.
+		Render(); // Invoke a render before we delay.
+		SDL_Delay(2000);
+		//m_bRunning = false;//REQUIRES A DIFFERENT APPROACH, CAUSE IT'LL HAVE TO TRIGGER A STATE CHANGE TO LOSESTATE
+	}
+	// Door check.
+	for (int i = 0; i < Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_iMaxDoors; i++)
+	{
+		if (Game::Instance()->GetPlayer()->GetY() == Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetY() && Game::Instance()->GetPlayer()->GetX() == Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetX())
+		{
+			Game::Instance()->GetPlayer()->SetX(Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetDestX());
+			Game::Instance()->GetPlayer()->SetY(Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetDestY());
+			Game::Instance()->SetLevel(Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetToLevel());
+			break;
+		}
+	}
+}
 
 void GameState::Render() {
+	// Render the map.
+	for (int row = 0; row < ROWS; row++)
+	{
+		for (int col = 0; col < COLS; col++)
+		{
+			SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetTile(), 
+						   Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[row][col].GetSrcP(), 
+						   Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[row][col].GetDstP());
+		}
+	}
+	
+	// Render the doors. Note, if we didn't, we'd just see a black square.
+	for (int i = 0; i < Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_iMaxDoors; i++)
+		SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetTile(), 
+					   Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetSrcP(), 
+					   Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetDstP());
+	
+	// Render the player.
+	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetPlayerText(), Game::Instance()->GetPlayer()->GetSrcP(), Game::Instance()->GetPlayer()->GetDstP());
 	State::Render();
 }
 
@@ -81,9 +150,25 @@ void GameState::Resume() {}
 
 
 //PAUSE STATE
-PauseState::PauseState() {}
+PauseState::PauseState() {
+	SDL_Rect tempSrc, tempDest;
+	tempSrc.x = 0x00;
+	tempSrc.y = 0x00;
+	tempSrc.w = 0x80;
+	tempSrc.h = 0x80;
 
-PauseState::compl PauseState() {}
+	tempDest.x = 0x1C1;
+	tempDest.y = 0x1A5;
+	tempDest.w = 0x70;
+	tempDest.h = 0x80;
+
+	pButton = new PlayButton(tempSrc, tempDest);
+}
+
+PauseState::compl PauseState() {
+	delete pButton;
+	pButton = nullptr;
+}
 
 void PauseState::Update() {}
 
@@ -99,9 +184,25 @@ void PauseState::Exit() {}
 void PauseState::Resume() {}
 
 //WIN STATE
-WinState::WinState() {}
+WinState::WinState() {
+	SDL_Rect tempSrc, tempDest;
+	tempSrc.x = 0x00;
+	tempSrc.y = 0x00;
+	tempSrc.w = 0x80;
+	tempSrc.h = 0x80;
 
-WinState::compl WinState() {}
+	tempDest.x = 0x1C1;
+	tempDest.y = 0x1A5;
+	tempDest.w = 0x70;
+	tempDest.h = 0x80;
+
+	pButton = new PlayButton(tempSrc, tempDest);
+}
+
+WinState::compl WinState() {
+	delete pButton;
+	pButton = nullptr;
+}
 
 void WinState::Update() {}
 
@@ -117,9 +218,25 @@ void WinState::Resume() {}
 
 
 //LOSE STATE
-LoseState::LoseState() {}
+LoseState::LoseState() {
+	SDL_Rect tempSrc, tempDest;
+	tempSrc.x = 0x00;
+	tempSrc.y = 0x00;
+	tempSrc.w = 0x80;
+	tempSrc.h = 0x80;
 
-LoseState::compl LoseState() {}
+	tempDest.x = 0x1C1;
+	tempDest.y = 0x1A5;
+	tempDest.w = 0x70;
+	tempDest.h = 0x80;
+
+	pButton = new PlayButton(tempSrc, tempDest);
+}
+
+LoseState::compl LoseState() {
+	delete pButton;
+	pButton = nullptr;
+}
 
 void LoseState::Update() {}
 
