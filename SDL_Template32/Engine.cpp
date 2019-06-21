@@ -1,6 +1,6 @@
 #include <typeinfo>
 #include "Engine.h"
-#define FPS 10 // A '.0' will make it a double.
+#define FPS 30 // A '.0' will make it a double.
 
 Engine::Engine():m_bStarted(false), m_bRunning(false)
 {
@@ -145,46 +145,6 @@ void Engine::SetLevel(int index) {
 void Engine::Update()
 {
 	m_sMachin->Update();
-
-	/*
-
-	// Move the player.
-	if (KeyDown(SDL_SCANCODE_W) && m_pLevels[m_iCurrLevel].m_Map[m_pPlayer->GetY() - 1][m_pPlayer->GetX()].isObstacle() == false)
-	{
-		m_pPlayer->SetY(m_pPlayer->GetY() - 1);
-	}
-	else if (KeyDown(SDL_SCANCODE_S) && m_pLevels[m_iCurrLevel].m_Map[m_pPlayer->GetY() + 1][m_pPlayer->GetX()].isObstacle() == false)
-	{
-		m_pPlayer->SetY(m_pPlayer->GetY() + 1);
-	}
-	if (KeyDown(SDL_SCANCODE_A) && m_pLevels[m_iCurrLevel].m_Map[m_pPlayer->GetY()][m_pPlayer->GetX() - 1].isObstacle() == false)
-	{
-		m_pPlayer->SetX(m_pPlayer->GetX() - 1);
-	}
-	else if (KeyDown(SDL_SCANCODE_D) && m_pLevels[m_iCurrLevel].m_Map[m_pPlayer->GetY()][m_pPlayer->GetX() + 1].isObstacle() == false)
-	{
-		m_pPlayer->SetX(m_pPlayer->GetX() + 1);
-	}
-	// Hazard check.
-	if (m_pLevels[m_iCurrLevel].m_Map[m_pPlayer->GetY()][m_pPlayer->GetX()].isHazard())
-	{
-		m_pPlayer->GetSrcP()->x = 160; // Set tombstone sprite.
-		Render(); // Invoke a render before we delay.
-		SDL_Delay(2000);
-		m_bRunning = false;
-	}
-	// Door check.
-	for (int i = 0; i < m_pLevels[m_iCurrLevel].m_iMaxDoors; i++)
-	{
-		if (m_pPlayer->GetY() == m_pLevels[m_iCurrLevel].m_Doors[i].GetY() && m_pPlayer->GetX() == m_pLevels[m_iCurrLevel].m_Doors[i].GetX())
-		{
-			m_pPlayer->SetX(m_pLevels[m_iCurrLevel].m_Doors[i].GetDestX());
-			m_pPlayer->SetY(m_pLevels[m_iCurrLevel].m_Doors[i].GetDestY());
-			m_iCurrLevel = m_pLevels[m_iCurrLevel].m_Doors[i].GetToLevel();
-			break;
-		}
-	}
-	//*/
 }
 
 void Engine::RequestStateChange() {

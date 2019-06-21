@@ -84,14 +84,17 @@ class PlayButton : public Sprite {
 class Player : public Sprite
 {
 private:
-	int m_iX, m_iY, m_iSprite;
+	int m_iX, m_iY, m_iSprite, m_iMaxSprites, m_iFrame, m_iMaxFrame;
 	bool m_alive;
 	bool m_hasKey;
 	bool m_hasItem;
 
 public:
 	Player(SDL_Rect s, SDL_Rect d) :Sprite(s, d) {
-
+		m_iSprite = 0;
+		m_iMaxSprites = 5;
+		m_iFrame = 0;
+		m_iMaxFrame = 5;
 		m_alive = true;
 		m_hasKey = false;
 		m_hasItem = false;
@@ -112,7 +115,10 @@ public:
 	bool IsAlive()const { return m_alive; }
 	bool HasKey()const { return m_hasKey; }
 	bool HasItem()const { return m_hasItem; }
-	void Die() { m_alive = false; }
+	void Die() {
+		m_rSrc.x = 160;
+		m_alive = false;
+	}
 	void GetKey() { m_hasKey = true; }
 	void GetItem() { m_hasItem = true; }
 	void SetX(int x) 
@@ -125,8 +131,25 @@ public:
 		m_iY = y; 
 		m_rDst.y = y * 32;
 	}
-	void Animate() {
+	void MoveX(int x) { 
+		
+		m_rDst.x += x;
+	}
+	void MoveY(int y) {
+		m_iY = (m_rDst.y += y)/32;
+	}
+	void Animate() { //taken straight from the asteroids example, with adapted names
+		m_iFrame++;
+		if (m_iFrame == m_iMaxFrame) {
+			m_iFrame = 0;
+			m_iSprite++;
+			if (m_iSprite == m_iMaxSprites)
+				m_iSprite = 0;
+		}
+	}
 
+	void Update() {
+		m_rSrc.x = m_iFrame * 32;
 	}
 };
 

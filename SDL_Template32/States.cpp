@@ -99,31 +99,34 @@ void GameState::Update() {
 		Game::Instance()->RequestStateChange();
 	}
 
-	// Move the player.
+	// Move the player. "Semi-hardcoded for now"
 	if (Game::Instance()->KeyDown(SDL_SCANCODE_W) && 
 		Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY() - 1][Game::Instance()->GetPlayer()->GetX()].isObstacle() == false)
 	{
-		Game::Instance()->GetPlayer()->SetY(Game::Instance()->GetPlayer()->GetY() - 1);
+		Game::Instance()->GetPlayer()->MoveY(-2);
+		Game::Instance()->GetPlayer()->Animate();
 	}
 	else if (Game::Instance()->KeyDown(SDL_SCANCODE_S) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY() + 1][Game::Instance()->GetPlayer()->GetX()].isObstacle() == false)
 	{
-		Game::Instance()->GetPlayer()->SetY(Game::Instance()->GetPlayer()->GetY() + 1);
+		Game::Instance()->GetPlayer()->MoveY(2);
+		Game::Instance()->GetPlayer()->Animate();
 	}
 	if (Game::Instance()->KeyDown(SDL_SCANCODE_A) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX() - 1].isObstacle() == false)
 	{
-		Game::Instance()->GetPlayer()->SetX(Game::Instance()->GetPlayer()->GetX() - 1);
+		Game::Instance()->GetPlayer()->MoveX(-2);
+		Game::Instance()->GetPlayer()->Animate();
 	}
 	else if (Game::Instance()->KeyDown(SDL_SCANCODE_D) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX() + 1].isObstacle() == false)
 	{
-		Game::Instance()->GetPlayer()->SetX(Game::Instance()->GetPlayer()->GetX() + 1);
+		Game::Instance()->GetPlayer()->MoveX(2);
+		Game::Instance()->GetPlayer()->Animate();
 	}
 	// Hazard check.
 	if (Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX()].isHazard())
-	{
-		Game::Instance()->GetPlayer()->GetSrcP()->x = 160; // Set tombstone sprite.
+	{		
+		Game::Instance()->GetPlayer()->Die(); //the player sets its own sprites now
 		Render(); // Invoke a render before we delay.
-		Game::Instance()->GetPlayer()->Die();
-		
+
 		SDL_Delay(1000);
 		Game::Instance()->RequestStateChange();
 		//m_bRunning = false;//REQUIRES A DIFFERENT APPROACH, CAUSE IT'LL HAVE TO TRIGGER A STATE CHANGE TO LOSESTATE
@@ -139,6 +142,7 @@ void GameState::Update() {
 			break;
 		}
 	}
+	Game::Instance()->GetPlayer()->Update();
 }
 
 void GameState::Render() {
