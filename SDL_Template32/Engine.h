@@ -49,7 +49,9 @@ public:
 	Player* GetPlayer() { return m_pPlayer; }
 	bool KeyDown(SDL_Scancode c);
 	void GetMouse(SDL_Rect r);
+	void RequestStateChange();
 	SDL_Renderer* GetRenderer() { return m_pRenderer; }
+	SDL_Window* GetWindow() const { return m_pWindow; }
 
 private:
 	Engine();

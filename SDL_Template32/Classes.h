@@ -75,6 +75,7 @@ class PlayButton : public Sprite {
 		
 	public:
 		PlayButton(SDL_Rect s, SDL_Rect d) :Sprite(s, d) {}
+		//Design-wise, the callback is here. It's just not being used...
 		void Click(void (*inFunction)(State*), State* targetDest) {
 			(*inFunction)(targetDest);
 		}
@@ -84,11 +85,36 @@ class Player : public Sprite
 {
 private:
 	int m_iX, m_iY, m_iSprite;
+	bool m_alive;
+	bool m_hasKey;
+	bool m_hasItem;
 
 public:
-	Player(SDL_Rect s, SDL_Rect d) :Sprite(s, d) {}
+	Player(SDL_Rect s, SDL_Rect d) :Sprite(s, d) {
+
+		m_alive = true;
+		m_hasKey = false;
+		m_hasItem = false;
+	}
+	void Reset(int x, int y) {
+		//resets position to whatever the engine determines
+		SetX(x);
+		SetY(y);
+		//resets sprite
+		this->m_rSrc.x = 0;
+		//resets control variables (life, key, item)
+		m_alive = true;
+		m_hasKey = false;
+		m_hasItem = false;
+	}
 	int GetX() { return m_iX; }
 	int GetY() { return m_iY; }
+	bool IsAlive()const { return m_alive; }
+	bool HasKey()const { return m_hasKey; }
+	bool HasItem()const { return m_hasItem; }
+	void Die() { m_alive = false; }
+	void GetKey() { m_hasKey = true; }
+	void GetItem() { m_hasItem = true; }
 	void SetX(int x) 
 	{ 
 		m_iX = x; 

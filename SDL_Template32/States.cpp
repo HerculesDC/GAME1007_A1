@@ -45,14 +45,6 @@ TitleState::compl TitleState() {
 
 void TitleState::Update() {
 	Game::Instance()->GetMouse(pButton->GetDst());
-	/*
-	if (Game::Instance()->GetMouse(pButton->GetDst())) {
-		if (1) {
-			cout << "Mouse inside button!" << endl;
-		}
-	}
-	else cout << "No mouse?" << endl;
-	//*/
 }
 
 void TitleState::Render() {
@@ -60,6 +52,8 @@ void TitleState::Render() {
 	m_rSrc = { 0, 0, 1024, 728 };
 	m_rDest = { 0, 0, 1024, 728 };
 	
+	SDL_SetRenderDrawColor(Game::Instance()->GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(Game::Instance()->GetRenderer());
 	//further implementation goes here
 	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetImage(), &m_rSrc, &m_rDest);
 	
@@ -73,13 +67,19 @@ void TitleState::Exit() {}
 
 void TitleState::Resume() {}
 
-
 // GAME STATE
 GameState::GameState() {}
 
 GameState::compl GameState() {}
 
 void GameState::Update() {
+
+	//Pause Game
+
+	if (Game::Instance()->KeyDown(SDL_SCANCODE_P)) {
+		Game::Instance()->RequestStateChange();
+	}
+
 	// Move the player.
 	if (Game::Instance()->KeyDown(SDL_SCANCODE_W) && 
 		Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY() - 1][Game::Instance()->GetPlayer()->GetX()].isObstacle() == false)
@@ -103,7 +103,9 @@ void GameState::Update() {
 	{
 		Game::Instance()->GetPlayer()->GetSrcP()->x = 160; // Set tombstone sprite.
 		Render(); // Invoke a render before we delay.
-		SDL_Delay(2000);
+		Game::Instance()->GetPlayer()->Die();
+		Game::Instance()->RequestStateChange();
+		//SDL_Delay(2000);
 		//m_bRunning = false;//REQUIRES A DIFFERENT APPROACH, CAUSE IT'LL HAVE TO TRIGGER A STATE CHANGE TO LOSESTATE
 	}
 	// Door check.
@@ -120,6 +122,9 @@ void GameState::Update() {
 }
 
 void GameState::Render() {
+
+	SDL_SetRenderDrawColor(Game::Instance()->GetRenderer(), 0x00, 0x00, 0x00, 0xFF);
+	SDL_RenderClear(Game::Instance()->GetRenderer());
 	// Render the map.
 	for (int row = 0; row < ROWS; row++)
 	{
@@ -163,6 +168,11 @@ PauseState::PauseState() {
 	tempDest.h = 0x80;
 
 	pButton = new PlayButton(tempSrc, tempDest);
+	
+	/*
+	m_overlay.x = 0; m_overlay.y = 0;
+	SDL_GetWindowSize(Game::Instance()->GetWindow(), &m_overlay.w, &m_overlay.h);
+	//*/
 }
 
 PauseState::compl PauseState() {
@@ -170,10 +180,18 @@ PauseState::compl PauseState() {
 	pButton = nullptr;
 }
 
-void PauseState::Update() {}
+void PauseState::Update() {
+	Game::Instance()->GetMouse(pButton->GetDst());
+}
 
 void PauseState::Render() {
-	SDL_SetRenderDrawColor(Game::Instance()->GetRenderer(), 0x00, 0x00, 0x64, 0x63);
+	//the two lines below need to be used together for the alpha channel to be properly blended
+	SDL_SetRenderDrawColor(Game::Instance()->GetRenderer(), 0x00, 0x00, 0x64, 0x32);
+	SDL_SetRenderDrawBlendMode(Game::Instance()->GetRenderer(), SDL_BLENDMODE_BLEND);
+	//this line renders to the whole renderer, since the second argument passed is a nullptr
+	SDL_RenderFillRect(Game::Instance()->GetRenderer(), nullptr);
+
+	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetButton(), pButton->GetSrcP(), pButton->GetDstP());
 	State::Render();
 }
 
@@ -197,6 +215,10 @@ WinState::WinState() {
 	tempDest.h = 0x80;
 
 	pButton = new PlayButton(tempSrc, tempDest);
+	/*
+	m_overlay.x = 0; m_overlay.y = 0;
+	SDL_GetWindowSize(Game::Instance()->GetWindow(), &m_overlay.w, &m_overlay.h);
+	//*/
 }
 
 WinState::compl WinState() {
@@ -204,9 +226,17 @@ WinState::compl WinState() {
 	pButton = nullptr;
 }
 
-void WinState::Update() {}
+void WinState::Update() {
+	Game::Instance()->GetMouse(pButton->GetDst());
+}
 
-void WinState::Render() {
+void WinState::Render() {//reminder: Win/Loss DO NOT render overlays (as of now)
+
+	SDL_SetRenderDrawColor(Game::Instance()->GetRenderer(), 0x00, 0x00, 0xFF, 0xA0);
+	//SDL_SetRenderDrawBlendMode(Game::Instance()->GetRenderer(), SDL_BLENDMODE_BLEND);
+	SDL_RenderFillRect(Game::Instance()->GetRenderer(), nullptr);
+
+	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetButton(), pButton->GetSrcP(), pButton->GetDstP());
 	State::Render();
 }
 
@@ -219,6 +249,7 @@ void WinState::Resume() {}
 
 //LOSE STATE
 LoseState::LoseState() {
+	
 	SDL_Rect tempSrc, tempDest;
 	tempSrc.x = 0x00;
 	tempSrc.y = 0x00;
@@ -238,9 +269,17 @@ LoseState::compl LoseState() {
 	pButton = nullptr;
 }
 
-void LoseState::Update() {}
+void LoseState::Update() {
+	Game::Instance()->GetMouse(pButton->GetDst());
+}
 
-void LoseState::Render() {
+void LoseState::Render() {//reminder: Win/Loss DO NOT render overlays (as of now)
+
+	SDL_SetRenderDrawColor(Game::Instance()->GetRenderer(), 0xA0, 0x00, 0x00, 0xFF);
+	//SDL_SetRenderDrawBlendMode(Game::Instance()->GetRenderer(), SDL_BLENDMODE_BLEND);
+	SDL_RenderFillRect(Game::Instance()->GetRenderer(), nullptr);
+
+	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetButton(), pButton->GetSrcP(), pButton->GetDstP());
 	State::Render();
 }
 
@@ -261,13 +300,19 @@ void SMachine::Update() { if(!m_vStates.empty()) m_vStates.back()->Update(); }
 
 void SMachine::Render() { // Requires refinement for display of the game state
 	if (!m_vStates.empty()) { //checks for emptiness
-		if (typeid(m_vStates.back()) == typeid(PauseState)) { //if the last state is pause
+		m_vStates.shrink_to_fit();
+		if (typeid(*(m_vStates.back())) == typeid(PauseState)) { //if the last state is pause
 			// Assuming Pause was overlapped on Game
 			//		=> Alternate implementation had type comparisons in a for loop, 
 			//			but this approach seems faster
-			m_vStates[m_vStates.size() - 2]->Render();
+			for (int i = 0; i < m_vStates.size(); ++i) {
+				m_vStates[i]->Render();
+			}
 		}
-		m_vStates.back()->Render();
+		else {
+			m_vStates.back()->Render();
+		}
+		
 	}
 }
 
@@ -279,8 +324,8 @@ void SMachine::PushState(State* pState) {
 void SMachine::ChangeState(State* pState) { //verify again later for accuracy
 	if (!m_vStates.empty()) { //emptyness check
 		//Game state cannot be popped on pause
-		if (typeid(m_vStates.back()) == typeid(GameState)
-			&& typeid(*pState) == typeid(PauseState)) { //type comparisons
+		if (typeid(*(m_vStates.back())) == typeid(GameState)
+			&& typeid(*(pState)) == typeid(PauseState)) { //type comparisons	
 			PushState(pState);
 		}
 		else {
@@ -291,7 +336,6 @@ void SMachine::ChangeState(State* pState) { //verify again later for accuracy
 	else {
 		PushState(pState);
 	}
-	
 }
 
 void SMachine::PopState() {//check implementation
@@ -317,5 +361,6 @@ void SMachine::DestroyLastState() {
 		delete m_vStates.back();
 		m_vStates.back() = nullptr;
 		m_vStates.pop_back();
+		m_vStates.shrink_to_fit();
 	}
 }

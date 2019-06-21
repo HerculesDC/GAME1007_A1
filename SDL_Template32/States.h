@@ -60,7 +60,11 @@ class PauseState : public State {
 		void Resume() override;
 
 	private:
-		SDL_Rect m_rSrc, m_rDest;
+		SDL_Rect m_rSrc, m_rDest; 
+		/* originally, there was an SDL_Rect m_overlay as well
+			that was dropped when I discovered you can pass null
+			to SDL_FillRect to fill the whole rendering area
+		//*/
 		PlayButton* pButton;
 };
 

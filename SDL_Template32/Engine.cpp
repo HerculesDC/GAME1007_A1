@@ -83,8 +83,7 @@ bool Engine::Init(const char * title, int xPos, int yPos, int width, int height,
 	m_sMachin = new SMachine();
 	m_sMachin->PushState(new TitleState());
 	m_pPlayer = new Player({0, 0, 32, 32}, {COLS/2*32, ROWS/2*32, 32, 32});
-	m_pPlayer->SetX(COLS/2);
-	m_pPlayer->SetY(ROWS/2);
+	m_pPlayer->Reset(COLS/2, ROWS/2); //created a Reset function to reset player's condition when player opts to play again
 	m_pLevels = new Level[5] { Level(3, "Level1.txt"), Level(1, "Level2.txt"), Level(1, "Level3.txt"), 
 		                       Level(2, "Level4.txt"), Level(1, "Level5.txt") };
 	m_iCurrLevel = 0;
@@ -130,9 +129,8 @@ void Engine::GetMouse(SDL_Rect r) {
 		
 		if (m_mouse->x >= r.x && m_mouse->x <= (r.x + r.w) &&
 			m_mouse->y >= r.y && m_mouse->y <= (r.y + r.h)) {
-			cout << "can change state" << endl;
+				RequestStateChange();
 		}
-		//*/
 	}
 }
 
@@ -185,6 +183,37 @@ void Engine::Update()
 	//*/
 }
 
+void Engine::RequestStateChange() {
+	
+	//std::cout << typeid(*(m_sMachin->GetStates().back())).name() << endl;
+	if (typeid(*(m_sMachin->GetStates().back())) == typeid(TitleState)) {
+		m_pPlayer->Reset(COLS/2, ROWS/2);
+		m_sMachin->ChangeState(new GameState());
+	}
+	else if (typeid(*(m_sMachin->GetStates().back())) == typeid(GameState)) {
+		
+		if (!m_pPlayer->IsAlive()) { //check for death
+			m_sMachin->ChangeState(new LoseState());
+		}
+		else{
+			if (m_pPlayer->HasItem()) {
+				m_sMachin->ChangeState(new WinState());
+			}
+			else { 
+				m_sMachin->ChangeState(new PauseState());
+			}
+		}
+	}
+	else if (typeid(*(m_sMachin->GetStates().back())) == typeid(PauseState)) {
+		m_sMachin->PopState();
+	}
+	else if (typeid(*(m_sMachin->GetStates().back())) == typeid(WinState) || 
+			 typeid(*(m_sMachin->GetStates().back())) == typeid(LoseState)) {
+		m_sMachin->Clean();
+		m_sMachin->PushState(new TitleState());
+	}
+}
+
 void Engine::Wake()
 {
 	m_start = SDL_GetTicks();
@@ -200,9 +229,10 @@ void Engine::Sleep()
 
 void Engine::Render()
 {
+	/*
 	SDL_SetRenderDrawColor(m_pRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(m_pRenderer); // Clear the screen with the draw color.
-
+	//*/
 	m_sMachin->Render();
 }
 
