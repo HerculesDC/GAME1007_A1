@@ -103,22 +103,22 @@ void GameState::Update() {
 	if (Game::Instance()->KeyDown(SDL_SCANCODE_W) && 
 		Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY() - 1][Game::Instance()->GetPlayer()->GetX()].isObstacle() == false)
 	{
-		Game::Instance()->GetPlayer()->MoveY(-2);
+		Game::Instance()->GetPlayer()->MoveY(-Game::Instance()->GetPlayer()->GetSpeed());
 		Game::Instance()->GetPlayer()->Animate();
 	}
 	else if (Game::Instance()->KeyDown(SDL_SCANCODE_S) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY() + 1][Game::Instance()->GetPlayer()->GetX()].isObstacle() == false)
 	{
-		Game::Instance()->GetPlayer()->MoveY(2);
+		Game::Instance()->GetPlayer()->MoveY(Game::Instance()->GetPlayer()->GetSpeed());
 		Game::Instance()->GetPlayer()->Animate();
 	}
 	if (Game::Instance()->KeyDown(SDL_SCANCODE_A) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX() - 1].isObstacle() == false)
 	{
-		Game::Instance()->GetPlayer()->MoveX(-2);
+		Game::Instance()->GetPlayer()->MoveX(-Game::Instance()->GetPlayer()->GetSpeed());
 		Game::Instance()->GetPlayer()->Animate();
 	}
 	else if (Game::Instance()->KeyDown(SDL_SCANCODE_D) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX() + 1].isObstacle() == false)
 	{
-		Game::Instance()->GetPlayer()->MoveX(2);
+		Game::Instance()->GetPlayer()->MoveX(Game::Instance()->GetPlayer()->GetSpeed());
 		Game::Instance()->GetPlayer()->Animate();
 	}
 	// Hazard check.
@@ -196,7 +196,7 @@ PauseState::PauseState() {
 	m_rText.y = 200;
 	TTF_SizeText(Game::Instance()->GetFont(), m_text, &m_rText.w, &m_rText.h);
 
-	m_tColor = { 0xFF, 0x00, 0xFF, SDL_ALPHA_OPAQUE };
+	m_tColor = { 0x00, 0xA0, 0xFF, SDL_ALPHA_OPAQUE };
 
 	SDL_Surface* tempSurf = TTF_RenderText_Solid(Game::Instance()->GetFont(), m_text, m_tColor);
 	m_tText = SDL_CreateTextureFromSurface(Game::Instance()->GetRenderer(), tempSurf);
@@ -275,7 +275,8 @@ void WinState::Update() {
 	Game::Instance()->GetMouse(pButton->GetDst());
 }
 
-void WinState::Render() {//reminder: Win/Loss DO NOT render overlays (as of now)
+void WinState::Render() {//reminder: Win/Loss DO NOT render overlays. (as of now)
+								  // There's no "previous state" to render underneath it
 
 	SDL_SetRenderDrawColor(Game::Instance()->GetRenderer(), 0x00, 0x00, 0xA0, 0xA0);
 	SDL_RenderFillRect(Game::Instance()->GetRenderer(), nullptr);

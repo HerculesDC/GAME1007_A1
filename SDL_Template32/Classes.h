@@ -84,13 +84,14 @@ class PlayButton : public Sprite {
 class Player : public Sprite
 {
 private:
-	int m_iX, m_iY, m_iSprite, m_iMaxSprites, m_iFrame, m_iMaxFrame;
+	int m_iX, m_iY, m_speed, m_iSprite, m_iMaxSprites, m_iFrame, m_iMaxFrame;
 	bool m_alive;
 	bool m_hasKey;
 	bool m_hasItem;
 
 public:
 	Player(SDL_Rect s, SDL_Rect d) :Sprite(s, d) {
+		m_speed = 4;
 		m_iSprite = 0;
 		m_iMaxSprites = 5;
 		m_iFrame = 0;
@@ -112,6 +113,7 @@ public:
 	}
 	int GetX() { return m_iX; }
 	int GetY() { return m_iY; }
+	int GetSpeed()const { return m_speed; }
 	bool IsAlive()const { return m_alive; }
 	bool HasKey()const { return m_hasKey; }
 	bool HasItem()const { return m_hasItem; }
@@ -133,7 +135,7 @@ public:
 	}
 	void MoveX(int x) { 
 		
-		m_rDst.x += x;
+		m_iX = (m_rDst.x += x)/32;
 	}
 	void MoveY(int y) {
 		m_iY = (m_rDst.y += y)/32;

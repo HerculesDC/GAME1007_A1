@@ -3,6 +3,6 @@
   States.cpp
 C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\States.cpp(54): warning C4150: deletion of pointer to incomplete type 'SDL_Texture'; no destructor called
   C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL\SDL2-2.0.9\include\SDL_render.h(128): note: see declaration of 'SDL_Texture'
-C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\States.cpp(366): warning C4018: '<': signed/unsigned mismatch
+C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\SDL_Template32\States.cpp(367): warning C4018: '<': signed/unsigned mismatch
   Generating Code...
   SDL_Template32.vcxproj -> C:\Users\hercu\Documents\SchoolStuff\SemVI-II\GF2\A1\GAME1007_A1_StartProject\Debug\SDL_Template32.exe
