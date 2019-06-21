@@ -34,11 +34,28 @@ TitleState::TitleState() {
 		tempDest.y = 0x1A5;
 		tempDest.w = 0x70;
 		tempDest.h = 0x80;
-		 
+
+	m_text = "click play to start";
+	m_rText.x = 75;
+	m_rText.y = 200;
+	TTF_SizeText(Game::Instance()->GetFont(), m_text, &m_rText.w, &m_rText.h);
+
+	m_tColor = {0xFF, 0x00, 0xFF, SDL_ALPHA_OPAQUE};
+
+	SDL_Surface* tempSurf = TTF_RenderText_Solid(Game::Instance()->GetFont(), m_text, m_tColor);
+	m_tText = SDL_CreateTextureFromSurface(Game::Instance()->GetRenderer(), tempSurf);
+	SDL_FreeSurface(tempSurf);
+
 	pButton = new PlayButton(tempSrc, tempDest);
 }
 
 TitleState::compl TitleState() {
+	
+	delete m_tText;
+	m_tText = nullptr;
+
+	delete m_text;
+	m_text = nullptr;
 	delete pButton;
 	pButton = nullptr;
 }
@@ -56,6 +73,8 @@ void TitleState::Render() {
 	SDL_RenderClear(Game::Instance()->GetRenderer());
 	//further implementation goes here
 	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetImage(), &m_rSrc, &m_rDest);
+
+	SDL_RenderCopy(Game::Instance()->GetRenderer(), m_tText, nullptr, &m_rText);
 	
 	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetButton(), pButton->GetSrcP(), pButton->GetDstP());
 	State::Render();
@@ -104,8 +123,9 @@ void GameState::Update() {
 		Game::Instance()->GetPlayer()->GetSrcP()->x = 160; // Set tombstone sprite.
 		Render(); // Invoke a render before we delay.
 		Game::Instance()->GetPlayer()->Die();
+		
+		SDL_Delay(1000);
 		Game::Instance()->RequestStateChange();
-		//SDL_Delay(2000);
 		//m_bRunning = false;//REQUIRES A DIFFERENT APPROACH, CAUSE IT'LL HAVE TO TRIGGER A STATE CHANGE TO LOSESTATE
 	}
 	// Door check.
@@ -167,6 +187,17 @@ PauseState::PauseState() {
 	tempDest.w = 0x70;
 	tempDest.h = 0x80;
 
+	m_text = "click play to resume";
+	m_rText.x = 75;
+	m_rText.y = 200;
+	TTF_SizeText(Game::Instance()->GetFont(), m_text, &m_rText.w, &m_rText.h);
+
+	m_tColor = { 0xFF, 0x00, 0xFF, SDL_ALPHA_OPAQUE };
+
+	SDL_Surface* tempSurf = TTF_RenderText_Solid(Game::Instance()->GetFont(), m_text, m_tColor);
+	m_tText = SDL_CreateTextureFromSurface(Game::Instance()->GetRenderer(), tempSurf);
+	SDL_FreeSurface(tempSurf);
+
 	pButton = new PlayButton(tempSrc, tempDest);
 	
 	/*
@@ -186,10 +217,13 @@ void PauseState::Update() {
 
 void PauseState::Render() {
 	//the two lines below need to be used together for the alpha channel to be properly blended
+		//OBS: it'll only work because we're rendering 2 states at the same time
 	SDL_SetRenderDrawColor(Game::Instance()->GetRenderer(), 0x00, 0x00, 0x64, 0x32);
 	SDL_SetRenderDrawBlendMode(Game::Instance()->GetRenderer(), SDL_BLENDMODE_BLEND);
 	//this line renders to the whole renderer, since the second argument passed is a nullptr
 	SDL_RenderFillRect(Game::Instance()->GetRenderer(), nullptr);
+
+	SDL_RenderCopy(Game::Instance()->GetRenderer(), m_tText, nullptr, &m_rText);
 
 	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetButton(), pButton->GetSrcP(), pButton->GetDstP());
 	State::Render();
@@ -214,11 +248,18 @@ WinState::WinState() {
 	tempDest.w = 0x70;
 	tempDest.h = 0x80;
 
+	m_text = "click play to retry";
+	m_rText.x = 75;
+	m_rText.y = 200;
+	TTF_SizeText(Game::Instance()->GetFont(), m_text, &m_rText.w, &m_rText.h);
+
+	m_tColor = { 0xA0, 0xA0, 0xFF, SDL_ALPHA_OPAQUE };
+
+	SDL_Surface* tempSurf = TTF_RenderText_Solid(Game::Instance()->GetFont(), m_text, m_tColor);
+	m_tText = SDL_CreateTextureFromSurface(Game::Instance()->GetRenderer(), tempSurf);
+	SDL_FreeSurface(tempSurf);
+
 	pButton = new PlayButton(tempSrc, tempDest);
-	/*
-	m_overlay.x = 0; m_overlay.y = 0;
-	SDL_GetWindowSize(Game::Instance()->GetWindow(), &m_overlay.w, &m_overlay.h);
-	//*/
 }
 
 WinState::compl WinState() {
@@ -232,9 +273,10 @@ void WinState::Update() {
 
 void WinState::Render() {//reminder: Win/Loss DO NOT render overlays (as of now)
 
-	SDL_SetRenderDrawColor(Game::Instance()->GetRenderer(), 0x00, 0x00, 0xFF, 0xA0);
-	//SDL_SetRenderDrawBlendMode(Game::Instance()->GetRenderer(), SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(Game::Instance()->GetRenderer(), 0x00, 0x00, 0xA0, 0xA0);
 	SDL_RenderFillRect(Game::Instance()->GetRenderer(), nullptr);
+
+	SDL_RenderCopy(Game::Instance()->GetRenderer(), m_tText, nullptr, &m_rText);
 
 	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetButton(), pButton->GetSrcP(), pButton->GetDstP());
 	State::Render();
@@ -261,6 +303,17 @@ LoseState::LoseState() {
 	tempDest.w = 0x70;
 	tempDest.h = 0x80;
 
+	m_text = "click play to retry";
+	m_rText.x = 75;
+	m_rText.y = 200;
+	TTF_SizeText(Game::Instance()->GetFont(), m_text, &m_rText.w, &m_rText.h);
+
+	m_tColor = { 0xFF, 0xA0, 0xA0, SDL_ALPHA_OPAQUE };
+
+	SDL_Surface* tempSurf = TTF_RenderText_Solid(Game::Instance()->GetFont(), m_text, m_tColor);
+	m_tText = SDL_CreateTextureFromSurface(Game::Instance()->GetRenderer(), tempSurf);
+	SDL_FreeSurface(tempSurf);
+
 	pButton = new PlayButton(tempSrc, tempDest);
 }
 
@@ -273,11 +326,12 @@ void LoseState::Update() {
 	Game::Instance()->GetMouse(pButton->GetDst());
 }
 
-void LoseState::Render() {//reminder: Win/Loss DO NOT render overlays (as of now)
+void LoseState::Render() {
 
 	SDL_SetRenderDrawColor(Game::Instance()->GetRenderer(), 0xA0, 0x00, 0x00, 0xFF);
-	//SDL_SetRenderDrawBlendMode(Game::Instance()->GetRenderer(), SDL_BLENDMODE_BLEND);
 	SDL_RenderFillRect(Game::Instance()->GetRenderer(), nullptr);
+
+	SDL_RenderCopy(Game::Instance()->GetRenderer(), m_tText, nullptr, &m_rText);
 
 	SDL_RenderCopy(Game::Instance()->GetRenderer(), Game::Instance()->GetButton(), pButton->GetSrcP(), pButton->GetDstP());
 	State::Render();

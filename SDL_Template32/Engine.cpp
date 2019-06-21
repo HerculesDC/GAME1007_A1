@@ -79,7 +79,10 @@ bool Engine::Init(const char * title, int xPos, int yPos, int width, int height,
 		else return false; // Window init fail.
 	}
 	else return false; // SDL init fail.
+	
 	// Continue here after successful init.
+	TTF_Init(); //Font initialization. Returns an int, that won't be used right now
+	m_pFont = TTF_OpenFont("caveman.ttf", 0x32);
 	m_sMachin = new SMachine();
 	m_sMachin->PushState(new TitleState());
 	m_pPlayer = new Player({0, 0, 32, 32}, {COLS/2*32, ROWS/2*32, 32, 32});
@@ -89,6 +92,7 @@ bool Engine::Init(const char * title, int xPos, int yPos, int width, int height,
 	m_iCurrLevel = 0;
 	m_iKeystates = SDL_GetKeyboardState(nullptr);
 	m_mouse = nullptr;
+	
 	m_bRunning = true; // Everything is okay, start the engine.
 	return true;
 }
@@ -241,6 +245,8 @@ void Engine::Clean()
 	cout << "Cleaning game." << endl;
 	delete m_pPlayer;
 	delete [] m_pLevels;
+	TTF_CloseFont(m_pFont);
+	TTF_Quit(); //font cleanup
 	SDL_DestroyTexture(m_pPlayerText);
 	SDL_DestroyTexture(m_pTileText);
 	SDL_DestroyRenderer(m_pRenderer);

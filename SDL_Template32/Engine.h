@@ -34,6 +34,7 @@ private:
 	SDL_Texture* m_pPlayButtonText;
 	SDL_Texture* m_pPlayerText;
 	SDL_Texture* m_pTileText;
+	TTF_Font* m_pFont;
 
 // Methods.
 public:
@@ -43,6 +44,7 @@ public:
 	SDL_Texture* GetButton() const { return m_pPlayButtonText; }
 	SDL_Texture* GetPlayerText() const { return m_pPlayerText; }
 	SDL_Texture* GetTile() const { return m_pTileText; }
+	TTF_Font* GetFont() const { return m_pFont; }
 	Level* GetLevel() const { return m_pLevels; }
 	void SetLevel(int index);
 	int GetLevelIndex() const { return m_iCurrLevel; }
