@@ -6,6 +6,7 @@
 #include "GameObject.h"
 
 class PlayButton;
+class Sprite;
 
 class State {//abstract class
 	public:
@@ -54,6 +55,7 @@ class GameState : public State {
 		void Resume() override;
 
 	private:
+		bool CheckCollision(Sprite* bb1, Sprite * bb2); //opting for sprites
 };
 
 class PauseState : public State {

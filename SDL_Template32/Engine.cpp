@@ -1,6 +1,9 @@
 #include <typeinfo>
 #include "Engine.h"
 #define FPS 30 // A '.0' will make it a double.
+#define MIX_STEREO_SOUND 2 //for the audio mix
+#define MIX_AUDIO_SIZE 4096
+#define MIX_AUDIO_CHANNELS 16
 
 Engine::Engine():m_bStarted(false), m_bRunning(false)
 {
@@ -80,7 +83,15 @@ bool Engine::Init(const char * title, int xPos, int yPos, int width, int height,
 	}
 	else return false; // SDL init fail.
 	
-	// Continue here after successful init.
+	if (Mix_Init(MIX_INIT_MP3) != 0) {
+		Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_STEREO_SOUND, MIX_AUDIO_SIZE);
+		Mix_AllocateChannels(MIX_AUDIO_CHANNELS);
+		m_pMusic = Mix_LoadMUS("Summer.mp3");
+		m_pStep = Mix_LoadWAV("asphalt.wav");
+	}
+	else return false;
+	
+	// Continue here a, AUDIO_S16SYS, 2, fter successful init.
 	TTF_Init(); //Font initialization. Returns an int, that won't be used right now
 	m_pFont = TTF_OpenFont("caveman.ttf", 0x32);
 	m_sMachin = new SMachine();
@@ -193,24 +204,32 @@ void Engine::Sleep()
 
 void Engine::Render()
 {
-	/*
-	SDL_SetRenderDrawColor(m_pRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_RenderClear(m_pRenderer); // Clear the screen with the draw color.
-	//*/
 	m_sMachin->Render();
 }
 
 void Engine::Clean()
 {
 	cout << "Cleaning game." << endl;
+	//pointer deallocating
 	delete m_pPlayer;
 	delete [] m_pLevels;
+	//font cleanup
 	TTF_CloseFont(m_pFont);
-	TTF_Quit(); //font cleanup
+	//audio cleanup
+	Mix_FreeChunk(m_pStep);
+	Mix_FreeMusic(m_pMusic);
+	Mix_CloseAudio();
+	//cleaning textures
 	SDL_DestroyTexture(m_pPlayerText);
 	SDL_DestroyTexture(m_pTileText);
+	SDL_DestroyTexture(m_pPlayButtonText);
+	SDL_DestroyTexture(m_oScreensText);
+	//deallocating video resources
 	SDL_DestroyRenderer(m_pRenderer);
 	SDL_DestroyWindow(m_pWindow);
+	//Quitting routines
+	Mix_Quit();
 	IMG_Quit();
+	TTF_Quit();
 	SDL_Quit();
 }

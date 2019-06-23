@@ -10,8 +10,10 @@
  */
 
 #include <typeinfo> //to include type information
-
 #include "States.h"
+
+#define MUSIC_CHANNEL 1
+#define CHUNK_CHANNEL 2
 
 State::State() {}
 
@@ -91,6 +93,16 @@ GameState::GameState() {}
 
 GameState::compl GameState() {}
 
+bool GameState::CheckCollision(Sprite* bb1, Sprite* bb2) {
+	if (bb1->GetDst().x < (bb2->GetDst().x + bb2->GetDst().w) &&
+	   (bb1->GetDst().x + bb1->GetDst().w) > bb2->GetDst().x  &&
+	    bb1->GetDst().y < (bb2->GetDst().y + bb2->GetDst().h) &&
+	   (bb1->GetDst().y + bb1->GetDst().h) > bb2->GetDst().y)
+		return true;
+	else
+		return false;
+}
+
 void GameState::Update() {
 
 	//Pause Game
@@ -121,6 +133,21 @@ void GameState::Update() {
 		Game::Instance()->GetPlayer()->MoveX(Game::Instance()->GetPlayer()->GetSpeed());
 		Game::Instance()->GetPlayer()->Animate();
 	}
+
+	for (int row = 0; row < ROWS; ++row) {
+		for (int col = 0; col < COLS; ++col) {
+			if (Game::Instance()->GetLevel()->m_Map[row][col].isHazard()) {
+				if (CheckCollision(Game::Instance()->GetPlayer(), &Game::Instance()->GetLevel()->m_Map[row][col])) {
+					Game::Instance()->GetPlayer()->Die();
+					Render(); // Invoke a render before we delay.
+					SDL_Delay(1000);
+					Game::Instance()->RequestStateChange();
+				}
+			}
+			else continue;
+		}
+	}
+	/*
 	// Hazard check.
 	if (Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX()].isHazard())
 	{		
@@ -131,6 +158,7 @@ void GameState::Update() {
 		Game::Instance()->RequestStateChange();
 		//m_bRunning = false;//REQUIRES A DIFFERENT APPROACH, CAUSE IT'LL HAVE TO TRIGGER A STATE CHANGE TO LOSESTATE
 	}
+	//*/
 	// Door check.
 	for (int i = 0; i < Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_iMaxDoors; i++)
 	{
@@ -171,11 +199,22 @@ void GameState::Render() {
 	State::Render();
 }
 
-void GameState::Enter() {}
+void GameState::Enter() {
+	if (!Mix_PlayingMusic())//if not playing. Mix_PlayingMusic() returns an int(0 or 1)
+		Mix_PlayMusic(Game::Instance()->GetMusic(), -1);
+}
 
-void GameState::Exit() {}
+void GameState::Exit() {
+	if (Mix_PlayingMusic())
+		Mix_HaltMusic();
+}
 
-void GameState::Resume() {}
+void GameState::Resume() {
+	if (Mix_PausedMusic())
+		Mix_ResumeMusic();
+	else if (!Mix_PlayingMusic())
+		Mix_PlayMusic(Game::Instance()->GetMusic(), -1);
+}
 
 
 //PAUSE STATE
@@ -233,9 +272,15 @@ void PauseState::Render() {
 	State::Render();
 }
 
-void PauseState::Enter() {}
+void PauseState::Enter() {
+	if (Mix_PlayingMusic())
+		Mix_PauseMusic();
+}
 
-void PauseState::Exit() {}
+void PauseState::Exit() {
+	if (Mix_PausedMusic())
+		Mix_ResumeMusic();
+}
 
 void PauseState::Resume() {}
 
