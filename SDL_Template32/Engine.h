@@ -34,6 +34,8 @@ private:
 	SDL_Texture* m_pPlayButtonText;
 	SDL_Texture* m_pPlayerText;
 	SDL_Texture* m_pTileText;
+	SDL_Texture* m_pKeyText;
+	SDL_Texture* m_pGemText;
 	Mix_Music* m_pMusic;
 	Mix_Chunk* m_pStep;
 	TTF_Font* m_pFont;

@@ -208,7 +208,7 @@ void GameState::Render() {
 
 void GameState::Enter() {
 	if (!Mix_PlayingMusic())//if not playing. Mix_PlayingMusic() returns an int(0 or 1)
-		Mix_PlayMusic(Game::Instance()->GetMusic(), -1);
+		Mix_PlayMusic(Game::Instance()->GetMusic(), LOOP);
 }
 
 void GameState::Exit() {

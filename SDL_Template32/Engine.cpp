@@ -63,16 +63,22 @@ bool Engine::Init(const char * title, int xPos, int yPos, int width, int height,
 					SDL_Surface* pPlayButtonSurf = IMG_Load("playButton.png");
 					SDL_Surface* pPlayerSurf = IMG_Load("Player.png");
 					SDL_Surface* pTileSurf = IMG_Load("Tiles.png");
+					SDL_Surface* pKeySurf = IMG_Load("keys.png");
+					SDL_Surface* pCrystalSurf = IMG_Load("crystals.png");
 
 					m_oScreensText = SDL_CreateTextureFromSurface(m_pRenderer, pScreensSurf);
 					m_pPlayButtonText = SDL_CreateTextureFromSurface(m_pRenderer, pPlayButtonSurf);
 					m_pPlayerText = SDL_CreateTextureFromSurface(m_pRenderer, pPlayerSurf);
 					m_pTileText = SDL_CreateTextureFromSurface(m_pRenderer, pTileSurf);
+					m_pKeyText = SDL_CreateTextureFromSurface(m_pRenderer, pKeySurf);
+					m_pGemText = SDL_CreateTextureFromSurface(m_pRenderer, pCrystalSurf);
 					
 					SDL_FreeSurface(pScreensSurf);
 					SDL_FreeSurface(pPlayButtonSurf);
 					SDL_FreeSurface(pPlayerSurf);
 					SDL_FreeSurface(pTileSurf);
+					SDL_FreeSurface(pKeySurf);
+					SDL_FreeSurface(pCrystalSurf);
 					cout << "Image creation success!" << endl;
 				}
 				else return false; // Img(Png) init fail. The JPG library is not available in this build
@@ -225,6 +231,8 @@ void Engine::Clean()
 	SDL_DestroyTexture(m_pTileText);
 	SDL_DestroyTexture(m_pPlayButtonText);
 	SDL_DestroyTexture(m_oScreensText);
+	SDL_DestroyTexture(m_pKeyText);
+	SDL_DestroyTexture(m_pGemText);
 	//deallocating video resources
 	SDL_DestroyRenderer(m_pRenderer);
 	SDL_DestroyWindow(m_pWindow);
