@@ -262,6 +262,8 @@ PauseState::compl PauseState() {
 }
 
 void PauseState::Update() {
+	if (Mix_Playing(CHUNK_CHANNEL)) //opted for halt instead of pause because the moment it unpauses it'll detect the key presses and restart
+		Mix_HaltChannel(CHUNK_CHANNEL);
 	Game::Instance()->GetMouse(pButton->GetDst());
 }
 
@@ -282,6 +284,8 @@ void PauseState::Render() {
 void PauseState::Enter() {
 	if (Mix_PlayingMusic())
 		Mix_PauseMusic();
+	if (Mix_Playing(CHUNK_CHANNEL)) //opted for halt instead of pause because the moment it unpauses it'll detect the key presses and restart
+		Mix_HaltChannel(CHUNK_CHANNEL);
 }
 
 void PauseState::Exit() {
