@@ -12,8 +12,9 @@
 #include <typeinfo> //to include type information
 #include "States.h"
 
-#define MUSIC_CHANNEL 1
-#define CHUNK_CHANNEL 2
+#define LOOP -1
+#define NO_LOOP 0
+#define CHUNK_CHANNEL 1
 
 State::State() {}
 
@@ -93,7 +94,7 @@ GameState::GameState() {}
 
 GameState::compl GameState() {}
 
-bool GameState::CheckCollision(Sprite* bb1, Sprite* bb2) {
+bool GameState::CheckCollision(Sprite* bb1, Sprite* bb2) {//AABB type
 	if (bb1->GetDst().x < (bb2->GetDst().x + bb2->GetDst().w) &&
 	   (bb1->GetDst().x + bb1->GetDst().w) > bb2->GetDst().x  &&
 	    bb1->GetDst().y < (bb2->GetDst().y + bb2->GetDst().h) &&
@@ -106,63 +107,69 @@ bool GameState::CheckCollision(Sprite* bb1, Sprite* bb2) {
 void GameState::Update() {
 
 	//Pause Game
-
 	if (Game::Instance()->KeyDown(SDL_SCANCODE_P)) {
 		Game::Instance()->RequestStateChange();
 	}
-
+	//*
 	// Move the player. "Semi-hardcoded for now"
 	if (Game::Instance()->KeyDown(SDL_SCANCODE_W) && 
 		Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY() - 1][Game::Instance()->GetPlayer()->GetX()].isObstacle() == false)
 	{
 		Game::Instance()->GetPlayer()->MoveY(-Game::Instance()->GetPlayer()->GetSpeed());
 		Game::Instance()->GetPlayer()->Animate();
+		if (!Mix_Playing(CHUNK_CHANNEL))
+			Mix_PlayChannel(CHUNK_CHANNEL, Game::Instance()->GetChunk(), NO_LOOP);
 	}
-	else if (Game::Instance()->KeyDown(SDL_SCANCODE_S) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY() + 1][Game::Instance()->GetPlayer()->GetX()].isObstacle() == false)
+	else if (Game::Instance()->KeyDown(SDL_SCANCODE_S) && 
+			 Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY() + 1][Game::Instance()->GetPlayer()->GetX()].isObstacle() == false)
 	{
 		Game::Instance()->GetPlayer()->MoveY(Game::Instance()->GetPlayer()->GetSpeed());
 		Game::Instance()->GetPlayer()->Animate();
+		if (!Mix_Playing(CHUNK_CHANNEL))
+			Mix_PlayChannel(CHUNK_CHANNEL, Game::Instance()->GetChunk(), NO_LOOP);
 	}
-	if (Game::Instance()->KeyDown(SDL_SCANCODE_A) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX() - 1].isObstacle() == false)
+	if (Game::Instance()->KeyDown(SDL_SCANCODE_A) && 
+		Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX() - 1].isObstacle() == false)
 	{
 		Game::Instance()->GetPlayer()->MoveX(-Game::Instance()->GetPlayer()->GetSpeed());
 		Game::Instance()->GetPlayer()->Animate();
+		if (!Mix_Playing(CHUNK_CHANNEL))
+			Mix_PlayChannel(CHUNK_CHANNEL, Game::Instance()->GetChunk(), NO_LOOP);
 	}
-	else if (Game::Instance()->KeyDown(SDL_SCANCODE_D) && Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX() + 1].isObstacle() == false)
+	else if (Game::Instance()->KeyDown(SDL_SCANCODE_D) && 
+			 Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX() + 1].isObstacle() == false)
 	{
 		Game::Instance()->GetPlayer()->MoveX(Game::Instance()->GetPlayer()->GetSpeed());
 		Game::Instance()->GetPlayer()->Animate();
+		if (!Mix_Playing(CHUNK_CHANNEL))
+			Mix_PlayChannel(CHUNK_CHANNEL, Game::Instance()->GetChunk(), NO_LOOP);
 	}
 
+	if (Mix_Playing(CHUNK_CHANNEL) &&
+		!Game::Instance()->KeyDown(SDL_SCANCODE_S)&&
+		!Game::Instance()->KeyDown(SDL_SCANCODE_W) &&
+		!Game::Instance()->KeyDown(SDL_SCANCODE_A) &&
+		!Game::Instance()->KeyDown(SDL_SCANCODE_D)) { //stops playing as soon as the keys are not pressed anymore
+		Mix_HaltChannel(CHUNK_CHANNEL);
+	} 
+	//*/
 	for (int row = 0; row < ROWS; ++row) {
 		for (int col = 0; col < COLS; ++col) {
-			if (Game::Instance()->GetLevel()->m_Map[row][col].isHazard()) {
+			if (Game::Instance()->GetLevel()->m_Map[row][col].isHazard()) {//works because it triggers a state change, effectively breaking out of the loop
 				if (CheckCollision(Game::Instance()->GetPlayer(), &Game::Instance()->GetLevel()->m_Map[row][col])) {
 					Game::Instance()->GetPlayer()->Die();
-					Render(); // Invoke a render before we delay.
+					Render(); // Invoke a render before we delay. On occasion, this throws an exception for whatever reason. Rebuilding the solution kinda solves it
 					SDL_Delay(1000);
 					Game::Instance()->RequestStateChange();
 				}
 			}
-			else continue;
 		}
 	}
-	/*
-	// Hazard check.
-	if (Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Map[Game::Instance()->GetPlayer()->GetY()][Game::Instance()->GetPlayer()->GetX()].isHazard())
-	{		
-		Game::Instance()->GetPlayer()->Die(); //the player sets its own sprites now
-		Render(); // Invoke a render before we delay.
-
-		SDL_Delay(1000);
-		Game::Instance()->RequestStateChange();
-		//m_bRunning = false;//REQUIRES A DIFFERENT APPROACH, CAUSE IT'LL HAVE TO TRIGGER A STATE CHANGE TO LOSESTATE
-	}
-	//*/
 	// Door check.
 	for (int i = 0; i < Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_iMaxDoors; i++)
 	{
-		if (Game::Instance()->GetPlayer()->GetY() == Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetY() && Game::Instance()->GetPlayer()->GetX() == Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetX())
+		if (Game::Instance()->GetPlayer()->GetY() == Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetY() && 
+			Game::Instance()->GetPlayer()->GetX() == Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetX())
 		{
 			Game::Instance()->GetPlayer()->SetX(Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetDestX());
 			Game::Instance()->GetPlayer()->SetY(Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetDestY());

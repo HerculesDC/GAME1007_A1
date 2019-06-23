@@ -89,7 +89,7 @@ bool Engine::Init(const char * title, int xPos, int yPos, int width, int height,
 		m_pMusic = Mix_LoadMUS("Summer.mp3");
 		m_pStep = Mix_LoadWAV("asphalt.wav");
 	}
-	else return false;
+	else return false; //audio init fail
 	
 	// Continue here a, AUDIO_S16SYS, 2, fter successful init.
 	TTF_Init(); //Font initialization. Returns an int, that won't be used right now
@@ -139,6 +139,7 @@ bool Engine::KeyDown(SDL_Scancode c)
 	}
 	return false;
 }
+
 void Engine::GetMouse(SDL_Rect r) {
 	if (m_mouse) {
 		

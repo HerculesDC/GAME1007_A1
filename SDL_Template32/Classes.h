@@ -134,13 +134,14 @@ public:
 		m_rDst.y = y * 32;
 	}
 	void MoveX(int x) { 
-		
-		m_iX = (m_rDst.x += x)/32;
+		if ((m_rDst.x += x) % 32 == 0) m_iX = m_rDst.x / 32;
+		cout << (int)(m_rDst.x + (0.5 * m_rDst.w)) << ", " << m_iX << endl;
 	}
 	void MoveY(int y) {
-		m_iY = (m_rDst.y += y)/32;
+		if((m_rDst.y += y)%32==0) m_iY = m_rDst.y/32;
+		cout << (int)(m_rDst.y + (0.5 * m_rDst.h)) << ", " << m_iY << endl;
 	}
-	void Animate() { //taken straight from the asteroids example, with adapted names
+	void Animate() { //taken straight from the asteroids example, with adapted names.
 		m_iFrame++;
 		if (m_iFrame == m_iMaxFrame) {
 			m_iFrame = 0;
@@ -149,7 +150,6 @@ public:
 				m_iSprite = 0;
 		}
 	}
-
 	void Update() {
 		m_rSrc.x = m_iFrame * 32;
 	}
