@@ -69,6 +69,11 @@ public:
 	void SetDst(SDL_Rect d) { m_rDst = d; }
 };
 
+class Item : public Sprite {
+	private:
+	public:
+};
+
 class PlayButton : public Sprite {
 	private:
 		//int m_X, m_Y, m_W, m_H;
@@ -173,6 +178,7 @@ class Door : public Sprite
 {
 private:
 	int m_iX, m_iY, m_iToLevel, m_iDestX, m_iDestY;
+	bool m_IsLocked;
 
 public:
 	Door()
@@ -190,6 +196,7 @@ public:
 	void SetDestY(int y) { m_iDestY = y; }
 	void SetDoor(const int x, const int y, const int toLevel, const int destX, const int destY)
 	{
+		m_IsLocked = false; //hard-coding unlocked doors. Tests will come later
 		m_iX = x;
 		m_rDst.x = x * 32;
 		m_iY = y;
@@ -198,7 +205,9 @@ public:
 		m_iDestX = destX;
 		m_iDestY = destY;
 		cout << "Created door at " << x << "," << y << " to " << toLevel << endl;
-	}	
+	}
+	bool IsLocked() const {return m_IsLocked;}
+	bool SetLock(bool lockState) { m_IsLocked = lockState; }
 };
 
 class Level

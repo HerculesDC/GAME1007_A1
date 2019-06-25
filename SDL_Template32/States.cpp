@@ -169,7 +169,8 @@ void GameState::Update() {
 	for (int i = 0; i < Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_iMaxDoors; i++)
 	{
 		if (Game::Instance()->GetPlayer()->GetY() == Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetY() && 
-			Game::Instance()->GetPlayer()->GetX() == Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetX())
+			Game::Instance()->GetPlayer()->GetX() == Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetX() &&
+			!Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].IsLocked())
 		{
 			Game::Instance()->GetPlayer()->SetX(Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetDestX());
 			Game::Instance()->GetPlayer()->SetY(Game::Instance()->GetLevel()[Game::Instance()->GetLevelIndex()].m_Doors[i].GetDestY());
@@ -177,6 +178,8 @@ void GameState::Update() {
 			break;
 		}
 	}
+	// Item check
+
 	Game::Instance()->GetPlayer()->Update();
 }
 

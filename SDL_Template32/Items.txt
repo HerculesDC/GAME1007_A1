@@ -1,0 +1,2 @@
+The gems are in 64x64 grids
+The keys are approximately 60x60. Will require experimentation
