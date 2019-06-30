@@ -158,6 +158,8 @@ void GameState::Update() {
 			if (Game::Instance()->GetLevel()->m_Map[row][col].isHazard()) {//works because it triggers a state change, effectively breaking out of the loop
 				if (CheckCollision(Game::Instance()->GetPlayer(), &Game::Instance()->GetLevel()->m_Map[row][col])) {
 					Game::Instance()->GetPlayer()->Die();
+					if (Mix_Playing(CHUNK_CHANNEL)) //should stop walking sound
+						Mix_HaltChannel(CHUNK_CHANNEL);
 					Render(); // Invoke a render before we delay. On occasion, this throws an exception for whatever reason. Rebuilding the solution kinda solves it
 					SDL_Delay(1000);
 					Game::Instance()->RequestStateChange();
@@ -346,7 +348,10 @@ void WinState::Render() {//reminder: Win/Loss DO NOT render overlays. (as of now
 	State::Render();
 }
 
-void WinState::Enter() {}
+void WinState::Enter() {
+	if (Mix_Playing(CHUNK_CHANNEL))
+		Mix_HaltChannel(CHUNK_CHANNEL);
+}
 
 void WinState::Exit() {}
 
@@ -401,7 +406,10 @@ void LoseState::Render() {
 	State::Render();
 }
 
-void LoseState::Enter() {}
+void LoseState::Enter() {
+	if (Mix_Playing(CHUNK_CHANNEL))
+		Mix_HaltChannel(CHUNK_CHANNEL);
+}
 
 void LoseState::Exit() {}
 
